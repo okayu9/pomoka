@@ -23,8 +23,23 @@
 
 ```bash
 npm install
+
+# アイコン生成（public/icon.pngから自動生成）
+npm run generate-icons
+
 npm run dev
 ```
+
+## アイコンの設定
+
+`public/icon.png`（推奨サイズ512x512以上）を配置すると、以下のアイコンが自動生成されます：
+
+- `pwa-192x192.png` - PWAアイコン（小）
+- `pwa-512x512.png` - PWAアイコン（大）  
+- `apple-touch-icon.png` - iOSアイコン（180x180）
+- `favicon-32x32.png` - ファビコン（標準）
+- `favicon-16x16.png` - ファビコン（小）
+- `favicon.ico` - レガシーファビコン
 
 ## テスト
 
