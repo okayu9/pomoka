@@ -34,18 +34,50 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   console.log('✅ ポモドーロタイマーの基本動作が正常です');
 });
 
-test('スマホサイズでの表示確認', async ({ page }) => {
-  // スマホサイズに設定
+test('スマホ縦画面での表示確認', async ({ page }) => {
+  // スマホ縦画面サイズに設定
   await page.setViewportSize({ width: 375, height: 667 });
   
   await page.goto('/');
   
-  // スクリーンショットを撮る（スマホサイズ）
-  await page.screenshot({ path: 'screenshots/mobile-view.png', fullPage: true });
+  // スクリーンショットを撮る（スマホ縦画面）
+  await page.screenshot({ path: 'screenshots/mobile-portrait.png', fullPage: true });
   
   // レスポンシブデザインの確認
   const container = page.locator('.min-h-screen');
   await expect(container).toBeVisible();
   
-  console.log('✅ スマホサイズでの表示が正常です');
+  console.log('✅ スマホ縦画面での表示が正常です');
+});
+
+test('スマホ横画面での表示確認', async ({ page }) => {
+  // スマホ横画面サイズに設定
+  await page.setViewportSize({ width: 667, height: 375 });
+  
+  await page.goto('/');
+  
+  // スクリーンショットを撮る（スマホ横画面）
+  await page.screenshot({ path: 'screenshots/mobile-landscape.png', fullPage: true });
+  
+  // レスポンシブデザインの確認
+  const container = page.locator('.min-h-screen');
+  await expect(container).toBeVisible();
+  
+  console.log('✅ スマホ横画面での表示が正常です');
+});
+
+test('デスクトップサイズでの表示確認', async ({ page }) => {
+  // デスクトップサイズに設定
+  await page.setViewportSize({ width: 1024, height: 768 });
+  
+  await page.goto('/');
+  
+  // スクリーンショットを撮る（デスクトップサイズ）
+  await page.screenshot({ path: 'screenshots/desktop-view.png', fullPage: true });
+  
+  // レスポンシブデザインの確認
+  const container = page.locator('.min-h-screen');
+  await expect(container).toBeVisible();
+  
+  console.log('✅ デスクトップサイズでの表示が正常です');
 });

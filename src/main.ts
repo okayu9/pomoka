@@ -117,8 +117,8 @@ function flashScreen(): void {
 
 function initializeApp(): void {
   app.innerHTML = `
-    <div class="min-h-screen flex flex-col items-center justify-center bg-white">
-      <div class="text-center mb-12 relative">
+    <div class="min-h-screen flex flex-col lg:flex-row items-center justify-center bg-white p-4 lg:p-8">
+      <div class="text-center mb-8 lg:mb-0 lg:mr-12 relative">
         <div class="relative inline-block">
           <svg width="280" height="280" class="transform -rotate-90">
             <circle
@@ -143,18 +143,18 @@ function initializeApp(): void {
               class="transition-all duration-1000"
             />
           </svg>
-          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-6xl font-mono font-bold text-gray-800">25:00</div>
+          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-5xl lg:text-6xl font-mono font-bold text-gray-800">25:00</div>
         </div>
       </div>
       
-      <div class="flex justify-center gap-6">
-        <button id="start-btn" class="p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-20 h-20 flex items-center justify-center" aria-label="スタート">
+      <div class="flex flex-row lg:flex-col justify-center items-center gap-4 lg:gap-6">
+        <button id="start-btn" class="p-4 lg:p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" aria-label="スタート">
           ${getPlayIcon()}
         </button>
-        <button id="pause-btn" class="p-6 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors w-20 h-20 flex items-center justify-center" disabled aria-label="一時停止">
+        <button id="pause-btn" class="p-4 lg:p-6 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" disabled aria-label="一時停止">
           ${getPauseIcon()}
         </button>
-        <button id="reset-btn" class="p-6 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 flex items-center justify-center" disabled aria-label="リセット">
+        <button id="reset-btn" class="p-4 lg:p-6 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" disabled aria-label="リセット">
           ${getResetIcon()}
         </button>
       </div>
