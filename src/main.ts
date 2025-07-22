@@ -63,16 +63,19 @@ function updateButtons(state: string): void {
   if (state === 'idle') {
     playPauseBtn.innerHTML = getPlayIcon();
     playPauseBtn.setAttribute('aria-label', 'スタート');
+    playPauseBtn.className = 'p-4 lg:p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center';
     playPauseBtn.disabled = false;
     resetBtn.disabled = true;
   } else if (state === 'work' || state === 'break') {
     playPauseBtn.innerHTML = getPauseIcon();
     playPauseBtn.setAttribute('aria-label', '一時停止');
+    playPauseBtn.className = 'p-4 lg:p-6 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center';
     playPauseBtn.disabled = false;
     resetBtn.disabled = false;
   } else if (state === 'paused') {
     playPauseBtn.innerHTML = getPlayIcon();
     playPauseBtn.setAttribute('aria-label', '再開');
+    playPauseBtn.className = 'p-4 lg:p-6 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center';
     playPauseBtn.disabled = false;
     resetBtn.disabled = false;
   }
