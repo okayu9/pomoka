@@ -98,6 +98,7 @@ function updateProgressCircle(timeLeft: number): void {
 function updateButtons(state: string): void {
   const playPauseBtn = document.getElementById('play-pause-btn') as HTMLButtonElement;
   const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
+  const settingsContainer = document.getElementById('settings-container') as HTMLDivElement;
 
   if (state === 'idle') {
     playPauseBtn.innerHTML = getPlayIcon();
@@ -106,6 +107,8 @@ function updateButtons(state: string): void {
     playPauseBtn.disabled = false;
     resetBtn.disabled = true;
     resetBtn.className = 'p-5 md:p-7 bg-gray-400 text-gray-300 rounded-full cursor-not-allowed w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
+    // アイドル状態でのみ設定ボタンを表示
+    if (settingsContainer) settingsContainer.style.display = 'block';
   } else if (state === 'work' || state === 'break' || state === 'longBreak') {
     playPauseBtn.innerHTML = getPauseIcon();
     playPauseBtn.setAttribute('aria-label', '一時停止');
@@ -113,6 +116,8 @@ function updateButtons(state: string): void {
     playPauseBtn.disabled = false;
     resetBtn.disabled = false;
     resetBtn.className = 'p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
+    // タイマー実行中は設定ボタンを非表示
+    if (settingsContainer) settingsContainer.style.display = 'none';
   } else if (state === 'paused') {
     playPauseBtn.innerHTML = getPlayIcon();
     playPauseBtn.setAttribute('aria-label', '再開');
@@ -120,6 +125,8 @@ function updateButtons(state: string): void {
     playPauseBtn.disabled = false;
     resetBtn.disabled = false;
     resetBtn.className = 'p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
+    // 一時停止中は設定ボタンを非表示
+    if (settingsContainer) settingsContainer.style.display = 'none';
   }
 }
 
@@ -350,7 +357,7 @@ function initializeTimerApp(): void {
   
   app.innerHTML = `
     <div class="h-screen flex flex-col md:flex-row items-center justify-center bg-white p-2 md:p-4">
-      <div class="absolute top-4 right-4">
+      <div id="settings-container" class="absolute top-4 right-4">
         <button id="settings-btn" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center w-10 h-10" aria-label="設定">
           ${getSettingsIcon()}
         </button>
