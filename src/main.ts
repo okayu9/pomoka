@@ -119,6 +119,7 @@ function updateButtons(state: string): void {
     playPauseBtn.className = 'p-5 md:p-7 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
     playPauseBtn.disabled = false;
     resetBtn.disabled = false;
+    resetBtn.className = 'p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
   }
 }
 
