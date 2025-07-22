@@ -345,43 +345,43 @@ function initializeTimerApp(): void {
   const settings = getSettings();
   
   app.innerHTML = `
-    <div class="min-h-screen flex flex-col md:flex-row items-center justify-center bg-white p-4 md:p-8">
+    <div class="h-screen flex flex-col md:flex-row items-center justify-center bg-white p-2 md:p-4">
       <div class="absolute top-4 right-4">
         <button id="settings-btn" class="p-3 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center" aria-label="設定">
           ${getSettingsIcon()}
         </button>
       </div>
       
-      <div class="text-center mb-8 md:mb-0 md:mr-12 relative">
+      <div class="text-center mb-4 md:mb-0 md:mr-8 relative">
         <div class="relative inline-block">
-          <svg width="280" height="280" class="transform -rotate-90">
+          <svg width="320" height="320" class="md:w-96 md:h-96 transform -rotate-90">
             <circle
-              cx="140"
-              cy="140"
-              r="120"
+              cx="160"
+              cy="160"
+              r="140"
               fill="none"
               stroke="#e5e7eb"
               stroke-width="16"
             />
             <circle
               id="progress-circle"
-              cx="140"
-              cy="140"
-              r="120"
+              cx="160"
+              cy="160"
+              r="140"
               fill="none"
               stroke="#3b82f6"
               stroke-width="16"
-              stroke-dasharray="${2 * Math.PI * 120}"
+              stroke-dasharray="${2 * Math.PI * 140}"
               stroke-dashoffset="0"
               stroke-linecap="round"
               class="transition-all duration-1000"
             />
           </svg>
-          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-5xl lg:text-6xl font-mono font-bold text-gray-800">${formatTime(settings.workMinutes * 60)}</div>
+          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-6xl md:text-8xl font-mono font-bold text-gray-800">${formatTime(settings.workMinutes * 60)}</div>
         </div>
       </div>
       
-      <div class="flex flex-row md:flex-col justify-center items-center gap-6 md:gap-8">
+      <div class="flex flex-row md:flex-col justify-center items-center gap-4 md:gap-6">
         <button id="play-pause-btn" class="p-5 md:p-7 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center" aria-label="スタート">
           ${getPlayIcon()}
         </button>
