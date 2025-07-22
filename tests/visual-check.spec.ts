@@ -8,7 +8,6 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   await page.screenshot({ path: 'screenshots/initial-state.png', fullPage: true });
   
   // 基本要素の確認
-  await expect(page.locator('h1')).toHaveText('Pomoka');
   await expect(page.locator('#state-display')).toHaveText('待機中');
   await expect(page.locator('#time-display')).toHaveText('25:00');
   

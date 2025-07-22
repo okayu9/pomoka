@@ -129,8 +129,6 @@ function initializeApp(): void {
   app.innerHTML = `
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
       <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Pomoka</h1>
-        
         <div class="text-center mb-8 relative">
           <div id="state-display" class="text-2xl font-bold h-8 mb-4 text-gray-600">待機中</div>
           <div class="relative inline-block">
