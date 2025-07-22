@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/pomoka/' : '/',
   plugins: [
     tailwindcss(),
     VitePWA({
@@ -12,6 +13,10 @@ export default defineConfig({
         short_name: 'Pomoka',
         description: 'シンプルなポモドーロタイマー',
         theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        start_url: process.env.NODE_ENV === 'production' ? '/pomoka/' : '/',
+        scope: process.env.NODE_ENV === 'production' ? '/pomoka/' : '/',
         icons: [
           {
             src: 'pwa-192x192.png',

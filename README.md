@@ -108,3 +108,38 @@ npm run preview
 - オフライン使用可能
 - ホーム画面に追加可能
 - アプリライクな体験
+
+## デプロイ
+
+このプロジェクトはGitHub Actionsを使用してGitHub Pagesに自動デプロイされます。
+
+### セットアップ手順
+
+1. GitHubリポジトリの設定で Pages を有効化
+2. Source を "GitHub Actions" に設定
+3. メインブランチにプッシュすると自動デプロイ実行
+
+### 手動デプロイ
+
+```bash
+# 本番環境用ビルド
+NODE_ENV=production npm run build
+
+# プレビュー
+npm run preview
+```
+
+### PWAアイコンの生成
+
+初回セットアップ時にPWAアイコンを生成してください：
+
+1. `npm run dev` でローカルサーバーを起動
+2. `http://localhost:5173/generate-icons.html` にアクセス
+3. 生成された `pwa-192x192.png` と `pwa-512x512.png` を `public/` フォルダに保存
+
+### GitHub Actions
+
+- **自動テスト実行**: 全テストスイートが通過
+- **最適化ビルド**: TypeScript + Vite
+- **GitHub Pagesデプロイ**: dist/フォルダを公開
+- **PWA対応**: Service Worker とマニフェスト生成

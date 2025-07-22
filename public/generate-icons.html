@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PWA Icons</title>
+    <style>
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .container { text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PWA Icon Generator for Pomoka</h1>
+        <p>右クリックして画像を保存してください</p>
+        
+        <div>
+            <h2>192x192</h2>
+            <canvas id="canvas192" width="192" height="192"></canvas>
+        </div>
+        
+        <div>
+            <h2>512x512</h2>
+            <canvas id="canvas512" width="512" height="512"></canvas>
+        </div>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // 背景を白に
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            
+            // 円形の背景（青）
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = size * 0.4;
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = '#3b82f6';
+            ctx.fill();
+            
+            // タイマーのアイコン（時計針）
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = size * 0.02;
+            ctx.lineCap = 'round';
+            
+            // 短針（12時から3時の位置）
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + radius * 0.5, centerY);
+            ctx.stroke();
+            
+            // 長針（12時の位置）
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX, centerY - radius * 0.7);
+            ctx.stroke();
+            
+            // 中央の点
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, size * 0.01, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            
+            // 外側のプログレス円（部分的）
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 1.1, -Math.PI/2, Math.PI/2);
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = size * 0.015;
+            ctx.stroke();
+        }
+        
+        // 両方のサイズのアイコンを生成
+        drawIcon(document.getElementById('canvas192'), 192);
+        drawIcon(document.getElementById('canvas512'), 512);
+        
+        // 自動保存機能
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // 3秒後に自動保存
+        setTimeout(() => {
+            downloadCanvas(document.getElementById('canvas192'), 'pwa-192x192.png');
+            downloadCanvas(document.getElementById('canvas512'), 'pwa-512x512.png');
+        }, 3000);
+    </script>
+</body>
+</html>
