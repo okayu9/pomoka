@@ -133,11 +133,17 @@ export class PomodoroTimer {
     return this.timeLeft;
   }
 
-  // デバッグ用：残り1秒までスキップ
+  // デバッグ用：即座にタイマー完了
   skipToLastSecond(): void {
     if (this.state === 'work' || this.state === 'break' || this.state === 'longBreak') {
-      this.timeLeft = 1;
+      this.timeLeft = 0;
       this.config.onTick?.(this.timeLeft);
+      // 次のイベントループで完了処理を実行
+      setTimeout(() => {
+        if (this.timeLeft === 0) {
+          this.handleTimerComplete();
+        }
+      }, 100);
     }
   }
 }
