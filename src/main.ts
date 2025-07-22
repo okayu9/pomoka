@@ -218,7 +218,7 @@ function showSettingsView(): void {
   app.innerHTML = `
     <div class="min-h-screen flex flex-col bg-white p-6 lg:p-8">
       <div class="flex items-center justify-between mb-8">
-        <button id="back-btn" class="p-3 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center" aria-label="戻る">
+        <button id="back-btn" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center w-10 h-10" aria-label="戻る">
           ${getBackIcon()}
         </button>
         <h1 class="text-2xl font-bold text-gray-800">設定</h1>
@@ -351,7 +351,7 @@ function initializeTimerApp(): void {
   app.innerHTML = `
     <div class="h-screen flex flex-col md:flex-row items-center justify-center bg-white p-2 md:p-4">
       <div class="absolute top-4 right-4">
-        <button id="settings-btn" class="p-3 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center" aria-label="設定">
+        <button id="settings-btn" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center w-10 h-10" aria-label="設定">
           ${getSettingsIcon()}
         </button>
       </div>
@@ -381,7 +381,7 @@ function initializeTimerApp(): void {
               class="transition-all duration-1000"
             />
           </svg>
-          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-6xl md:text-8xl font-mono font-bold text-gray-800">${formatTime(settings.workMinutes * 60)}</div>
+          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-4xl md:text-6xl font-mono font-bold text-gray-800">${formatTime(settings.workMinutes * 60)}</div>
         </div>
       </div>
       
