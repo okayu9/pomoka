@@ -117,16 +117,18 @@ function flashScreen(): void {
 }
 
 function startResetHold(): void {
+  const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
+  if (!resetBtn || resetBtn.disabled) return;
+
   const resetProgressBar = document.getElementById('reset-progress');
   if (!resetProgressBar) return;
 
   resetProgress = 0;
   const holdDuration = 2000; // 2秒
-  const updateInterval = 50; // 50msごとに更新
 
   // プログレスバーのアニメーション開始
-  resetProgressBar.style.transform = 'translateX(0%)';
-  resetProgressBar.style.transitionDuration = `${holdDuration}ms`;
+  resetProgressBar.style.width = '100%';
+  resetProgressBar.style.transition = `width ${holdDuration}ms linear`;
 
   resetHoldTimeout = setTimeout(() => {
     // 長押し完了時にリセット実行
@@ -143,8 +145,8 @@ function resetResetHold(): void {
 
   const resetProgressBar = document.getElementById('reset-progress');
   if (resetProgressBar) {
-    resetProgressBar.style.transform = 'translateX(-100%)';
-    resetProgressBar.style.transitionDuration = '200ms';
+    resetProgressBar.style.width = '0%';
+    resetProgressBar.style.transition = 'width 200ms ease-out';
   }
 
   resetProgress = 0;
@@ -188,8 +190,10 @@ function initializeApp(): void {
         </button>
         <div class="relative">
           <button id="reset-btn" class="p-4 lg:p-6 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center relative overflow-hidden" disabled aria-label="リセット（長押し）">
-            ${getResetIcon()}
-            <div id="reset-progress" class="absolute inset-0 bg-red-500 opacity-30 transform -translate-x-full transition-transform duration-2000 ease-out"></div>
+            <div class="relative z-10">
+              ${getResetIcon()}
+            </div>
+            <div id="reset-progress" class="absolute inset-0 bg-red-500 opacity-40 w-0 transition-none"></div>
           </button>
         </div>
       </div>
