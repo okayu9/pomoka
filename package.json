@@ -9,7 +9,12 @@
     "preview": "vite preview",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "visual-check": "playwright test tests/visual-check.spec.ts"
+    "test:visual": "playwright test tests/visual-check.spec.ts",
+    "test:unit": "playwright test tests/timer-unit.spec.ts",
+    "test:accessibility": "playwright test tests/accessibility.spec.ts",
+    "test:performance": "playwright test tests/performance.spec.ts",
+    "test:all": "playwright test tests/",
+    "test:report": "playwright show-report"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.1",
