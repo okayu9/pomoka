@@ -443,7 +443,7 @@ function initializeTimerApp(): void {
 
   // デバッグ用：sキーで残り1秒までスキップ
   document.addEventListener('keydown', (event) => {
-    if (event.key === 's' || event.key === 'S') {
+    if ((event.key === 's' || event.key === 'S') && timer.getState() !== 'idle' && timer.getState() !== 'waiting') {
       timer.skipToLastSecond();
     }
   });
