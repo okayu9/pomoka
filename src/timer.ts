@@ -1,8 +1,10 @@
-export type TimerState = 'idle' | 'work' | 'break' | 'paused';
+export type TimerState = 'idle' | 'work' | 'break' | 'longBreak' | 'paused';
 
 export interface TimerConfig {
   workMinutes: number;
   breakMinutes: number;
+  longBreakMinutes: number;
+  cyclesUntilLongBreak: number;
   onTick?: (timeLeft: number) => void;
   onStateChange?: (state: TimerState) => void;
   onComplete?: () => void;
@@ -13,11 +15,14 @@ export class PomodoroTimer {
   private state: TimerState = 'idle';
   private timeLeft: number = 0;
   private intervalId?: number;
+  private completedCycles: number = 0;
 
   constructor(config: TimerConfig) {
     this.config = {
       workMinutes: 25,
       breakMinutes: 5,
+      longBreakMinutes: 15,
+      cyclesUntilLongBreak: 4,
       ...config
     };
   }
@@ -35,7 +40,7 @@ export class PomodoroTimer {
   }
 
   pause(): void {
-    if (this.state === 'work' || this.state === 'break') {
+    if (this.state === 'work' || this.state === 'break' || this.state === 'longBreak') {
       this.state = 'paused';
       this.stopTimer();
       this.config.onStateChange?.(this.state);
@@ -46,6 +51,7 @@ export class PomodoroTimer {
     this.stopTimer();
     this.state = 'idle';
     this.timeLeft = this.config.workMinutes * 60;
+    this.completedCycles = 0;
     this.config.onStateChange?.(this.state);
     this.config.onTick?.(this.timeLeft);
   }
@@ -73,10 +79,19 @@ export class PomodoroTimer {
     this.config.onComplete?.();
 
     if (this.state === 'work') {
-      this.state = 'break';
-      this.timeLeft = this.config.breakMinutes * 60;
+      this.completedCycles++;
+      
+      // 設定されたサイクル数に達した場合は長い休憩
+      if (this.completedCycles >= this.config.cyclesUntilLongBreak) {
+        this.state = 'longBreak';
+        this.timeLeft = this.config.longBreakMinutes * 60;
+        this.completedCycles = 0; // カウンターリセット
+      } else {
+        this.state = 'break';
+        this.timeLeft = this.config.breakMinutes * 60;
+      }
       this.startTimer();
-    } else if (this.state === 'break') {
+    } else if (this.state === 'break' || this.state === 'longBreak') {
       this.state = 'work';
       this.timeLeft = this.config.workMinutes * 60;
       this.startTimer();
@@ -86,7 +101,13 @@ export class PomodoroTimer {
   }
 
   private getPreviousState(): TimerState {
-    return this.timeLeft > this.config.breakMinutes * 60 ? 'work' : 'break';
+    if (this.timeLeft > this.config.longBreakMinutes * 60) {
+      return 'work';
+    } else if (this.timeLeft > this.config.breakMinutes * 60) {
+      return 'longBreak';
+    } else {
+      return 'break';
+    }
   }
 
   getState(): TimerState {
@@ -99,7 +120,7 @@ export class PomodoroTimer {
 
   // デバッグ用：残り1秒までスキップ
   skipToLastSecond(): void {
-    if (this.state === 'work' || this.state === 'break') {
+    if (this.state === 'work' || this.state === 'break' || this.state === 'longBreak') {
       this.timeLeft = 1;
       this.config.onTick?.(this.timeLeft);
     }

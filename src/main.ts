@@ -13,6 +13,8 @@ let currentView: 'timer' | 'settings' = 'timer';
 interface TimerSettings {
   workMinutes: number;
   breakMinutes: number;
+  longBreakMinutes: number;
+  cyclesUntilLongBreak: number;
 }
 
 function getSettings(): TimerSettings {
@@ -24,7 +26,12 @@ function getSettings(): TimerSettings {
       // Fall through to defaults
     }
   }
-  return { workMinutes: 25, breakMinutes: 5 };
+  return { 
+    workMinutes: 25, 
+    breakMinutes: 5, 
+    longBreakMinutes: 15, 
+    cyclesUntilLongBreak: 4 
+  };
 }
 
 function saveSettings(settings: TimerSettings): void {
@@ -100,7 +107,7 @@ function updateButtons(state: string): void {
     playPauseBtn.className = 'p-4 md:p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 md:w-20 md:h-20 flex items-center justify-center';
     playPauseBtn.disabled = false;
     resetBtn.disabled = true;
-  } else if (state === 'work' || state === 'break') {
+  } else if (state === 'work' || state === 'break' || state === 'longBreak') {
     playPauseBtn.innerHTML = getPauseIcon();
     playPauseBtn.setAttribute('aria-label', '一時停止');
     playPauseBtn.className = 'p-4 md:p-6 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors w-16 h-16 md:w-20 md:h-20 flex items-center justify-center';
@@ -125,6 +132,9 @@ function updateStateDisplay(state: string): void {
         break;
       case 'break':
         progressCircle.setAttribute('stroke', '#16a34a');
+        break;
+      case 'longBreak':
+        progressCircle.setAttribute('stroke', '#8b5cf6');
         break;
       case 'paused':
         progressCircle.setAttribute('stroke', '#6b7280');
@@ -239,6 +249,30 @@ function showSettingsView(): void {
           >
         </div>
         
+        <div class="bg-gray-50 rounded-lg p-6">
+          <label class="block text-sm font-medium text-gray-700 mb-3">長い休憩時間（分）</label>
+          <input 
+            type="number" 
+            id="long-break-minutes" 
+            value="${settings.longBreakMinutes}" 
+            min="5" 
+            max="60" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg"
+          >
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-6">
+          <label class="block text-sm font-medium text-gray-700 mb-3">長い休憩まで（サイクル数）</label>
+          <input 
+            type="number" 
+            id="cycles-until-long-break" 
+            value="${settings.cyclesUntilLongBreak}" 
+            min="2" 
+            max="10" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg"
+          >
+        </div>
+        
         <button id="save-settings" class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors font-medium">
           設定を保存
         </button>
@@ -253,14 +287,19 @@ function showSettingsView(): void {
   document.getElementById('save-settings')?.addEventListener('click', () => {
     const workInput = document.getElementById('work-minutes') as HTMLInputElement;
     const breakInput = document.getElementById('break-minutes') as HTMLInputElement;
+    const longBreakInput = document.getElementById('long-break-minutes') as HTMLInputElement;
+    const cyclesInput = document.getElementById('cycles-until-long-break') as HTMLInputElement;
     
-    if (workInput && breakInput) {
+    if (workInput && breakInput && longBreakInput && cyclesInput) {
       const newSettings: TimerSettings = {
         workMinutes: parseInt(workInput.value),
-        breakMinutes: parseInt(breakInput.value)
+        breakMinutes: parseInt(breakInput.value),
+        longBreakMinutes: parseInt(longBreakInput.value),
+        cyclesUntilLongBreak: parseInt(cyclesInput.value)
       };
       
-      if (newSettings.workMinutes > 0 && newSettings.breakMinutes > 0) {
+      if (newSettings.workMinutes > 0 && newSettings.breakMinutes > 0 && 
+          newSettings.longBreakMinutes > 0 && newSettings.cyclesUntilLongBreak > 0) {
         saveSettings(newSettings);
         // タイマーが実行中の場合は停止してリセット
         if (timer && timer.getState() !== 'idle') {
@@ -336,6 +375,8 @@ function initializeTimerApp(): void {
   timer = new PomodoroTimer({
     workMinutes: settings.workMinutes,
     breakMinutes: settings.breakMinutes,
+    longBreakMinutes: settings.longBreakMinutes,
+    cyclesUntilLongBreak: settings.cyclesUntilLongBreak,
     onTick: updateDisplay,
     onStateChange: (state) => {
       updateButtons(state);
@@ -349,7 +390,7 @@ function initializeTimerApp(): void {
     const state = timer.getState();
     if (state === 'idle' || state === 'paused') {
       timer.start();
-    } else if (state === 'work' || state === 'break') {
+    } else if (state === 'work' || state === 'break' || state === 'longBreak') {
       timer.pause();
     }
   });
