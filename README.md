@@ -137,8 +137,11 @@ npm run preview
 ### 手動デプロイ
 
 ```bash
-# 本番環境用ビルド
+# 本番環境用ビルド（GitHub Pages用）
 NODE_ENV=production npm run build
+
+# カスタムドメイン用ビルド
+CUSTOM_DOMAIN=true NODE_ENV=production npm run build
 
 # プレビュー
 npm run preview
@@ -150,6 +153,16 @@ npm run preview
 - **最適化ビルド**: TypeScript + Vite
 - **GitHub Pagesデプロイ**: dist/フォルダを公開
 - **PWA対応**: Service Worker とマニフェスト生成
+
+### カスタムドメイン設定
+
+カスタムドメインを使用する場合は、`CUSTOM_DOMAIN=true`環境変数を設定してビルドしてください：
+
+```bash
+CUSTOM_DOMAIN=true NODE_ENV=production npm run build
+```
+
+これにより相対パスから`/pomoka/`プレフィックスが除去され、カスタムドメインでも正常に動作します。
 
 ### ローカルテスト
 
