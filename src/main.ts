@@ -12,6 +12,24 @@ function formatTime(seconds: number): string {
   return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
+function getPlayIcon(): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M8 5v14l11-7z"/>
+  </svg>`;
+}
+
+function getPauseIcon(): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+  </svg>`;
+}
+
+function getResetIcon(): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+  </svg>`;
+}
+
 function updateDisplay(timeLeft: number): void {
   const display = document.getElementById('time-display');
   if (display) {
@@ -25,7 +43,8 @@ function updateButtons(state: string): void {
   const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
 
   if (state === 'idle') {
-    startBtn.textContent = 'スタート';
+    startBtn.innerHTML = getPlayIcon();
+    startBtn.setAttribute('aria-label', 'スタート');
     startBtn.disabled = false;
     pauseBtn.disabled = true;
     resetBtn.disabled = true;
@@ -34,7 +53,8 @@ function updateButtons(state: string): void {
     pauseBtn.disabled = false;
     resetBtn.disabled = false;
   } else if (state === 'paused') {
-    startBtn.textContent = '再開';
+    startBtn.innerHTML = getPlayIcon();
+    startBtn.setAttribute('aria-label', '再開');
     startBtn.disabled = false;
     pauseBtn.disabled = true;
     resetBtn.disabled = false;
@@ -94,14 +114,14 @@ function initializeApp(): void {
         </div>
         
         <div class="flex justify-center gap-4">
-          <button id="start-btn" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-            スタート
+          <button id="start-btn" class="p-4 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 flex items-center justify-center" aria-label="スタート">
+            ${getPlayIcon()}
           </button>
-          <button id="pause-btn" class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors" disabled>
-            一時停止
+          <button id="pause-btn" class="p-4 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors w-16 h-16 flex items-center justify-center" disabled aria-label="一時停止">
+            ${getPauseIcon()}
           </button>
-          <button id="reset-btn" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors" disabled>
-            リセット
+          <button id="reset-btn" class="p-4 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-16 h-16 flex items-center justify-center" disabled aria-label="リセット">
+            ${getResetIcon()}
           </button>
         </div>
       </div>
