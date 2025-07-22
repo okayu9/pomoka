@@ -11,7 +11,7 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   await expect(page.locator('#time-display')).toHaveText('25:00');
   
   // スタートボタンをクリック
-  await page.click('#start-btn');
+  await page.click('#play-pause-btn');
   
   // 1秒待機してタイマーが動いているか確認
   await page.waitForTimeout(1500);
@@ -21,14 +21,22 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   // スクリーンショットを撮る（作業中）
   await page.screenshot({ path: 'screenshots/working-state.png', fullPage: true });
   
-  // 一時停止ボタンをクリック
-  await page.click('#pause-btn');
+  // 一時停止ボタンをクリック（同じボタン）
+  await page.click('#play-pause-btn');
   
   // スクリーンショットを撮る（一時停止）
   await page.screenshot({ path: 'screenshots/paused-state.png', fullPage: true });
   
   // リセットボタンをクリック
   await page.click('#reset-btn');
+  
+  // 確認ダイアログが表示されることを確認
+  await expect(page.locator('#reset-dialog')).toBeVisible();
+  
+  // 確認ボタンをクリック
+  await page.click('#confirm-reset');
+  
+  // タイマーがリセットされることを確認
   await expect(page.locator('#time-display')).toHaveText('25:00');
   
   console.log('✅ ポモドーロタイマーの基本動作が正常です');

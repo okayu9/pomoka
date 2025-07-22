@@ -54,25 +54,23 @@ function updateProgressCircle(timeLeft: number): void {
 }
 
 function updateButtons(state: string): void {
-  const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
-  const pauseBtn = document.getElementById('pause-btn') as HTMLButtonElement;
+  const playPauseBtn = document.getElementById('play-pause-btn') as HTMLButtonElement;
   const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
 
   if (state === 'idle') {
-    startBtn.innerHTML = getPlayIcon();
-    startBtn.setAttribute('aria-label', 'スタート');
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
+    playPauseBtn.innerHTML = getPlayIcon();
+    playPauseBtn.setAttribute('aria-label', 'スタート');
+    playPauseBtn.disabled = false;
     resetBtn.disabled = true;
   } else if (state === 'work' || state === 'break') {
-    startBtn.disabled = true;
-    pauseBtn.disabled = false;
+    playPauseBtn.innerHTML = getPauseIcon();
+    playPauseBtn.setAttribute('aria-label', '一時停止');
+    playPauseBtn.disabled = false;
     resetBtn.disabled = false;
   } else if (state === 'paused') {
-    startBtn.innerHTML = getPlayIcon();
-    startBtn.setAttribute('aria-label', '再開');
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
+    playPauseBtn.innerHTML = getPlayIcon();
+    playPauseBtn.setAttribute('aria-label', '再開');
+    playPauseBtn.disabled = false;
     resetBtn.disabled = false;
   }
 }
@@ -115,6 +113,20 @@ function flashScreen(): void {
   }, 300);
 }
 
+function showResetDialog(): void {
+  const dialog = document.getElementById('reset-dialog');
+  if (dialog) {
+    dialog.classList.remove('hidden');
+  }
+}
+
+function hideResetDialog(): void {
+  const dialog = document.getElementById('reset-dialog');
+  if (dialog) {
+    dialog.classList.add('hidden');
+  }
+}
+
 function initializeApp(): void {
   app.innerHTML = `
     <div class="min-h-screen flex flex-col lg:flex-row items-center justify-center bg-white p-4 lg:p-8">
@@ -147,16 +159,30 @@ function initializeApp(): void {
         </div>
       </div>
       
-      <div class="flex flex-row lg:flex-col justify-center items-center gap-4 lg:gap-6">
-        <button id="start-btn" class="p-4 lg:p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" aria-label="スタート">
+      <div class="flex flex-row lg:flex-col justify-center items-center gap-6 lg:gap-8">
+        <button id="play-pause-btn" class="p-4 lg:p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" aria-label="スタート">
           ${getPlayIcon()}
-        </button>
-        <button id="pause-btn" class="p-4 lg:p-6 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" disabled aria-label="一時停止">
-          ${getPauseIcon()}
         </button>
         <button id="reset-btn" class="p-4 lg:p-6 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" disabled aria-label="リセット">
           ${getResetIcon()}
         </button>
+      </div>
+      
+      <!-- リセット確認ダイアログ -->
+      <div id="reset-dialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
+          <div class="text-center">
+            <div class="text-lg font-semibold text-gray-800 mb-4">タイマーをリセットしますか？</div>
+            <div class="flex justify-center gap-4">
+              <button id="confirm-reset" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                リセット
+              </button>
+              <button id="cancel-reset" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -172,9 +198,33 @@ function initializeApp(): void {
     onComplete: flashScreen
   });
 
-  document.getElementById('start-btn')?.addEventListener('click', () => timer.start());
-  document.getElementById('pause-btn')?.addEventListener('click', () => timer.pause());
-  document.getElementById('reset-btn')?.addEventListener('click', () => timer.reset());
+  // Play/Pause ボタンのイベントリスナー
+  document.getElementById('play-pause-btn')?.addEventListener('click', () => {
+    const state = timer.getState();
+    if (state === 'idle' || state === 'paused') {
+      timer.start();
+    } else if (state === 'work' || state === 'break') {
+      timer.pause();
+    }
+  });
+
+  // リセットボタンのイベントリスナー（確認ダイアログ表示）
+  document.getElementById('reset-btn')?.addEventListener('click', showResetDialog);
+  
+  // ダイアログのイベントリスナー
+  document.getElementById('confirm-reset')?.addEventListener('click', () => {
+    hideResetDialog();
+    timer.reset();
+  });
+  
+  document.getElementById('cancel-reset')?.addEventListener('click', hideResetDialog);
+  
+  // ダイアログ外をクリックした時のイベントリスナー
+  document.getElementById('reset-dialog')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+      hideResetDialog();
+    }
+  });
   
   // 初期状態のプログレスバーを設定
   updateProgressCircle(25 * 60);
