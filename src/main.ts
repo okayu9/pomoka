@@ -64,22 +64,23 @@ function updateButtons(state: string): void {
 function updateStateDisplay(state: string): void {
   const stateDisplay = document.getElementById('state-display');
   if (stateDisplay) {
+    const baseClasses = 'text-2xl font-bold h-8 mb-4';
     switch (state) {
       case 'work':
         stateDisplay.textContent = '作業中';
-        stateDisplay.className = 'text-2xl font-bold text-red-600';
+        stateDisplay.className = `${baseClasses} text-red-600`;
         break;
       case 'break':
         stateDisplay.textContent = '休憩中';
-        stateDisplay.className = 'text-2xl font-bold text-green-600';
+        stateDisplay.className = `${baseClasses} text-green-600`;
         break;
       case 'paused':
         stateDisplay.textContent = '一時停止';
-        stateDisplay.className = 'text-2xl font-bold text-gray-600';
+        stateDisplay.className = `${baseClasses} text-gray-600`;
         break;
       default:
         stateDisplay.textContent = '待機中';
-        stateDisplay.className = 'text-2xl font-bold text-gray-600';
+        stateDisplay.className = `${baseClasses} text-gray-600`;
     }
   }
 }
@@ -109,7 +110,7 @@ function initializeApp(): void {
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Pomoka</h1>
         
         <div class="text-center mb-8">
-          <div id="state-display" class="text-2xl font-bold text-gray-600 mb-4">待機中</div>
+          <div id="state-display" class="text-2xl font-bold h-8 mb-4 text-gray-600">待機中</div>
           <div id="time-display" class="text-6xl font-mono font-bold text-gray-800">25:00</div>
         </div>
         
