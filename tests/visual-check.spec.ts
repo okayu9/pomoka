@@ -27,14 +27,11 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   // スクリーンショットを撮る（一時停止）
   await page.screenshot({ path: 'screenshots/paused-state.png', fullPage: true });
   
-  // リセットボタンをクリック
-  await page.click('#reset-btn');
-  
-  // 確認ダイアログが表示されることを確認
-  await expect(page.locator('#reset-dialog')).toBeVisible();
-  
-  // 確認ボタンをクリック
-  await page.click('#confirm-reset');
+  // リセットボタンを長押し（2秒以上）
+  await page.hover('#reset-btn');
+  await page.mouse.down();
+  await page.waitForTimeout(2500); // 2.5秒待機（2秒の長押し + 余裕）
+  await page.mouse.up();
   
   // タイマーがリセットされることを確認
   await expect(page.locator('#time-display')).toHaveText('25:00');

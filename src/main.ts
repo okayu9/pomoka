@@ -5,6 +5,9 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 
 let timer: PomodoroTimer;
 let flashInterval: number | undefined;
+let resetHoldTimeout: number | undefined;
+let resetHoldInterval: number | undefined;
+let resetProgress: number = 0;
 
 function formatTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
@@ -113,18 +116,38 @@ function flashScreen(): void {
   }, 300);
 }
 
-function showResetDialog(): void {
-  const dialog = document.getElementById('reset-dialog');
-  if (dialog) {
-    dialog.classList.remove('hidden');
-  }
+function startResetHold(): void {
+  const resetProgressBar = document.getElementById('reset-progress');
+  if (!resetProgressBar) return;
+
+  resetProgress = 0;
+  const holdDuration = 2000; // 2秒
+  const updateInterval = 50; // 50msごとに更新
+
+  // プログレスバーのアニメーション開始
+  resetProgressBar.style.transform = 'translateX(0%)';
+  resetProgressBar.style.transitionDuration = `${holdDuration}ms`;
+
+  resetHoldTimeout = setTimeout(() => {
+    // 長押し完了時にリセット実行
+    timer.reset();
+    resetResetHold();
+  }, holdDuration);
 }
 
-function hideResetDialog(): void {
-  const dialog = document.getElementById('reset-dialog');
-  if (dialog) {
-    dialog.classList.add('hidden');
+function resetResetHold(): void {
+  if (resetHoldTimeout) {
+    clearTimeout(resetHoldTimeout);
+    resetHoldTimeout = undefined;
   }
+
+  const resetProgressBar = document.getElementById('reset-progress');
+  if (resetProgressBar) {
+    resetProgressBar.style.transform = 'translateX(-100%)';
+    resetProgressBar.style.transitionDuration = '200ms';
+  }
+
+  resetProgress = 0;
 }
 
 function initializeApp(): void {
@@ -163,25 +186,11 @@ function initializeApp(): void {
         <button id="play-pause-btn" class="p-4 lg:p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" aria-label="スタート">
           ${getPlayIcon()}
         </button>
-        <button id="reset-btn" class="p-4 lg:p-6 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center" disabled aria-label="リセット">
-          ${getResetIcon()}
-        </button>
-      </div>
-      
-      <!-- リセット確認ダイアログ -->
-      <div id="reset-dialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
-          <div class="text-center">
-            <div class="text-lg font-semibold text-gray-800 mb-4">タイマーをリセットしますか？</div>
-            <div class="flex justify-center gap-4">
-              <button id="confirm-reset" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
-                リセット
-              </button>
-              <button id="cancel-reset" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
-                キャンセル
-              </button>
-            </div>
-          </div>
+        <div class="relative">
+          <button id="reset-btn" class="p-4 lg:p-6 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center relative overflow-hidden" disabled aria-label="リセット（長押し）">
+            ${getResetIcon()}
+            <div id="reset-progress" class="absolute inset-0 bg-red-500 opacity-30 transform -translate-x-full transition-transform duration-2000 ease-out"></div>
+          </button>
         </div>
       </div>
     </div>
@@ -208,23 +217,16 @@ function initializeApp(): void {
     }
   });
 
-  // リセットボタンのイベントリスナー（確認ダイアログ表示）
-  document.getElementById('reset-btn')?.addEventListener('click', showResetDialog);
-  
-  // ダイアログのイベントリスナー
-  document.getElementById('confirm-reset')?.addEventListener('click', () => {
-    hideResetDialog();
-    timer.reset();
-  });
-  
-  document.getElementById('cancel-reset')?.addEventListener('click', hideResetDialog);
-  
-  // ダイアログ外をクリックした時のイベントリスナー
-  document.getElementById('reset-dialog')?.addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) {
-      hideResetDialog();
-    }
-  });
+  // リセットボタンの長押しイベントリスナー
+  const resetBtn = document.getElementById('reset-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('mousedown', startResetHold);
+    resetBtn.addEventListener('mouseup', resetResetHold);
+    resetBtn.addEventListener('mouseleave', resetResetHold);
+    resetBtn.addEventListener('touchstart', startResetHold);
+    resetBtn.addEventListener('touchend', resetResetHold);
+    resetBtn.addEventListener('touchcancel', resetResetHold);
+  }
   
   // 初期状態のプログレスバーを設定
   updateProgressCircle(25 * 60);
