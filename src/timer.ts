@@ -5,6 +5,7 @@ export interface TimerConfig {
   breakMinutes: number;
   longBreakMinutes: number;
   cyclesUntilLongBreak: number;
+  longBreakEnabled: boolean;
   onTick?: (timeLeft: number) => void;
   onStateChange?: (state: TimerState) => void;
   onComplete?: () => void;
@@ -23,6 +24,7 @@ export class PomodoroTimer {
       breakMinutes: 5,
       longBreakMinutes: 15,
       cyclesUntilLongBreak: 4,
+      longBreakEnabled: true,
       ...config
     };
   }
@@ -81,8 +83,8 @@ export class PomodoroTimer {
     if (this.state === 'work') {
       this.completedCycles++;
       
-      // 設定されたサイクル数に達した場合は長い休憩
-      if (this.completedCycles >= this.config.cyclesUntilLongBreak) {
+      // 長い休憩が有効で設定されたサイクル数に達した場合は長い休憩
+      if (this.config.longBreakEnabled && this.completedCycles >= this.config.cyclesUntilLongBreak) {
         this.state = 'longBreak';
         this.timeLeft = this.config.longBreakMinutes * 60;
         this.completedCycles = 0; // カウンターリセット

@@ -15,6 +15,7 @@ interface TimerSettings {
   breakMinutes: number;
   longBreakMinutes: number;
   cyclesUntilLongBreak: number;
+  longBreakEnabled: boolean;
 }
 
 function getSettings(): TimerSettings {
@@ -30,7 +31,8 @@ function getSettings(): TimerSettings {
     workMinutes: 25, 
     breakMinutes: 5, 
     longBreakMinutes: 15, 
-    cyclesUntilLongBreak: 4 
+    cyclesUntilLongBreak: 4,
+    longBreakEnabled: true
   };
 }
 
@@ -250,7 +252,20 @@ function showSettingsView(): void {
         </div>
         
         <div class="bg-gray-50 rounded-lg p-6">
-          <label class="block text-sm font-medium text-gray-700 mb-3">長い休憩時間（分）</label>
+          <div class="flex items-center mb-4">
+            <input 
+              type="checkbox" 
+              id="long-break-enabled" 
+              ${settings.longBreakEnabled ? 'checked' : ''}
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+            >
+            <label for="long-break-enabled" class="ml-2 text-sm font-medium text-gray-700">長い休憩を有効にする</label>
+          </div>
+        </div>
+        
+        <div id="long-break-settings" class="${settings.longBreakEnabled ? '' : 'hidden'}">
+          <div class="bg-gray-50 rounded-lg p-6">
+            <label class="block text-sm font-medium text-gray-700 mb-3">長い休憩時間（分）</label>
           <input 
             type="number" 
             id="long-break-minutes" 
@@ -259,18 +274,19 @@ function showSettingsView(): void {
             max="60" 
             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg"
           >
-        </div>
-        
-        <div class="bg-gray-50 rounded-lg p-6">
-          <label class="block text-sm font-medium text-gray-700 mb-3">長い休憩まで（サイクル数）</label>
-          <input 
-            type="number" 
-            id="cycles-until-long-break" 
-            value="${settings.cyclesUntilLongBreak}" 
-            min="2" 
-            max="10" 
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg"
-          >
+          </div>
+          
+          <div class="bg-gray-50 rounded-lg p-6">
+            <label class="block text-sm font-medium text-gray-700 mb-3">長い休憩まで（サイクル数）</label>
+            <input 
+              type="number" 
+              id="cycles-until-long-break" 
+              value="${settings.cyclesUntilLongBreak}" 
+              min="2" 
+              max="10" 
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg"
+            >
+          </div>
         </div>
         
         <button id="save-settings" class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors font-medium">
@@ -283,19 +299,34 @@ function showSettingsView(): void {
   // Back button event listener
   document.getElementById('back-btn')?.addEventListener('click', showTimerView);
   
+  // Long break checkbox event listener
+  document.getElementById('long-break-enabled')?.addEventListener('change', (event) => {
+    const checkbox = event.target as HTMLInputElement;
+    const longBreakSettings = document.getElementById('long-break-settings');
+    if (longBreakSettings) {
+      if (checkbox.checked) {
+        longBreakSettings.classList.remove('hidden');
+      } else {
+        longBreakSettings.classList.add('hidden');
+      }
+    }
+  });
+  
   // Save settings event listener
   document.getElementById('save-settings')?.addEventListener('click', () => {
     const workInput = document.getElementById('work-minutes') as HTMLInputElement;
     const breakInput = document.getElementById('break-minutes') as HTMLInputElement;
     const longBreakInput = document.getElementById('long-break-minutes') as HTMLInputElement;
     const cyclesInput = document.getElementById('cycles-until-long-break') as HTMLInputElement;
+    const longBreakEnabledInput = document.getElementById('long-break-enabled') as HTMLInputElement;
     
-    if (workInput && breakInput && longBreakInput && cyclesInput) {
+    if (workInput && breakInput && longBreakInput && cyclesInput && longBreakEnabledInput) {
       const newSettings: TimerSettings = {
         workMinutes: parseInt(workInput.value),
         breakMinutes: parseInt(breakInput.value),
         longBreakMinutes: parseInt(longBreakInput.value),
-        cyclesUntilLongBreak: parseInt(cyclesInput.value)
+        cyclesUntilLongBreak: parseInt(cyclesInput.value),
+        longBreakEnabled: longBreakEnabledInput.checked
       };
       
       if (newSettings.workMinutes > 0 && newSettings.breakMinutes > 0 && 
@@ -377,6 +408,7 @@ function initializeTimerApp(): void {
     breakMinutes: settings.breakMinutes,
     longBreakMinutes: settings.longBreakMinutes,
     cyclesUntilLongBreak: settings.cyclesUntilLongBreak,
+    longBreakEnabled: settings.longBreakEnabled,
     onTick: updateDisplay,
     onStateChange: (state) => {
       updateButtons(state);
