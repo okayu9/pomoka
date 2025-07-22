@@ -95,4 +95,12 @@ export class PomodoroTimer {
   getTimeLeft(): number {
     return this.timeLeft;
   }
+
+  // デバッグ用：残り1秒までスキップ
+  skipToLastSecond(): void {
+    if (this.state === 'work' || this.state === 'break') {
+      this.timeLeft = 1;
+      this.config.onTick?.(this.timeLeft);
+    }
+  }
 }
