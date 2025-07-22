@@ -129,14 +129,6 @@ NODE_ENV=production npm run build
 npm run preview
 ```
 
-### PWAアイコンの生成
-
-初回セットアップ時にPWAアイコンを生成してください：
-
-1. `npm run dev` でローカルサーバーを起動
-2. `http://localhost:5173/generate-icons.html` にアクセス
-3. 生成された `pwa-192x192.png` と `pwa-512x512.png` を `public/` フォルダに保存
-
 ### GitHub Actions
 
 - **自動テスト実行**: 全テストスイートが通過
