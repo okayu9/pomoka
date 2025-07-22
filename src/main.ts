@@ -6,7 +6,7 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 let timer: PomodoroTimer;
 let flashInterval: number | undefined;
 let resetHoldTimeout: number | undefined;
-let resetHoldInterval: number | undefined;
+let resetSecondPhaseTimeout: number | undefined;
 let resetProgress: number = 0;
 
 function formatTime(seconds: number): string {
@@ -130,11 +130,11 @@ function startResetHold(): void {
   resetProgressBar.style.transition = 'width 50ms ease-out';
   resetProgressBar.style.width = '33.33%';
 
-  // 少し待ってから残りの部分をゆっくり進める
-  setTimeout(() => {
-    resetProgressBar.style.transition = `width ${holdDuration - 50}ms ease-out`;
+  // 200ms後に残りの部分をゆっくり進める（長押し継続時のみ）
+  resetSecondPhaseTimeout = setTimeout(() => {
+    resetProgressBar.style.transition = `width ${holdDuration - 200}ms ease-out`;
     resetProgressBar.style.width = '100%';
-  }, 50);
+  }, 200);
 
   resetHoldTimeout = setTimeout(() => {
     // 長押し完了時にリセット実行
@@ -147,6 +147,11 @@ function resetResetHold(): void {
   if (resetHoldTimeout) {
     clearTimeout(resetHoldTimeout);
     resetHoldTimeout = undefined;
+  }
+
+  if (resetSecondPhaseTimeout) {
+    clearTimeout(resetSecondPhaseTimeout);
+    resetSecondPhaseTimeout = undefined;
   }
 
   const resetProgressBar = document.getElementById('reset-progress');
