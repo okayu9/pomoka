@@ -126,9 +126,15 @@ function startResetHold(): void {
   resetProgress = 0;
   const holdDuration = 1000; // 1秒
 
-  // プログレスバーのアニメーション開始（最初の一瞬で大きく進み、その後ゆっくり）
-  resetProgressBar.style.width = '100%';
-  resetProgressBar.style.transition = `width ${holdDuration}ms cubic-bezier(0.7, 0.9, 0.9, 1)`;
+  // まず即座に1/3まで進める
+  resetProgressBar.style.transition = 'width 50ms ease-out';
+  resetProgressBar.style.width = '33.33%';
+
+  // 少し待ってから残りの部分をゆっくり進める
+  setTimeout(() => {
+    resetProgressBar.style.transition = `width ${holdDuration - 50}ms ease-out`;
+    resetProgressBar.style.width = '100%';
+  }, 50);
 
   resetHoldTimeout = setTimeout(() => {
     // 長押し完了時にリセット実行
