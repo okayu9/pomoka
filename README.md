@@ -146,7 +146,19 @@ npm run preview
 
 ### GitHub Actions
 
-- **自動テスト実行**: 全テストスイートが通過
+- **アイコン自動生成**: public/icon.pngから各種アイコン生成
 - **最適化ビルド**: TypeScript + Vite
 - **GitHub Pagesデプロイ**: dist/フォルダを公開
 - **PWA対応**: Service Worker とマニフェスト生成
+
+### ローカルテスト
+
+```bash
+# 全テスト実行
+npm test
+
+# カテゴリ別テスト  
+npm run test:visual
+npm run test:accessibility
+npm run test:performance
+```
