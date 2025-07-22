@@ -137,11 +137,8 @@ npm run preview
 ### 手動デプロイ
 
 ```bash
-# 本番環境用ビルド（GitHub Pages用）
+# 本番環境用ビルド
 NODE_ENV=production npm run build
-
-# カスタムドメイン用ビルド
-CUSTOM_DOMAIN=true NODE_ENV=production npm run build
 
 # プレビュー
 npm run preview
@@ -154,15 +151,9 @@ npm run preview
 - **GitHub Pagesデプロイ**: dist/フォルダを公開
 - **PWA対応**: Service Worker とマニフェスト生成
 
-### カスタムドメイン設定
+### カスタムドメイン対応
 
-カスタムドメインを使用する場合は、`CUSTOM_DOMAIN=true`環境変数を設定してビルドしてください：
-
-```bash
-CUSTOM_DOMAIN=true NODE_ENV=production npm run build
-```
-
-これにより相対パスから`/pomoka/`プレフィックスが除去され、カスタムドメインでも正常に動作します。
+相対パス（`./`）を使用しているため、GitHub Pages（`username.github.io/pomoka/`）とカスタムドメインの両方で自動的に動作します。追加設定は不要です。
 
 ### ローカルテスト
 
