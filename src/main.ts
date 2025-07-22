@@ -381,7 +381,7 @@ function initializeTimerApp(): void {
               class="transition-all duration-1000"
             />
           </svg>
-          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-4xl md:text-6xl font-mono font-bold text-gray-800">${formatTime(settings.workMinutes * 60)}</div>
+          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-4xl md:text-6xl font-mono font-bold text-gray-800 leading-none">${formatTime(settings.workMinutes * 60)}</div>
         </div>
       </div>
       
@@ -437,20 +437,17 @@ function initializeTimerApp(): void {
   // レスポンシブ対応でSVGサイズを動的調整
   const updateSVGSize = () => {
     const svg = document.querySelector('svg');
-    const display = document.getElementById('time-display');
-    if (svg && display) {
-      if (window.innerWidth >= 768) { // md breakpoint
-        svg.setAttribute('width', '384');
-        svg.setAttribute('height', '384');
-        svg.querySelectorAll('circle').forEach(circle => {
-          circle.setAttribute('cx', '192');
-          circle.setAttribute('cy', '192');
-          circle.setAttribute('r', '168');
-        });
-        const progressCircle = document.getElementById('progress-circle');
-        if (progressCircle) {
-          progressCircle.setAttribute('stroke-dasharray', (2 * Math.PI * 168).toString());
-        }
+    if (svg && window.innerWidth >= 768) { // md breakpoint
+      svg.setAttribute('width', '384');
+      svg.setAttribute('height', '384');
+      svg.querySelectorAll('circle').forEach(circle => {
+        circle.setAttribute('cx', '192');
+        circle.setAttribute('cy', '192');
+        circle.setAttribute('r', '168');
+      });
+      const progressCircle = document.getElementById('progress-circle');
+      if (progressCircle) {
+        progressCircle.setAttribute('stroke-dasharray', (2 * Math.PI * 168).toString());
       }
     }
   };
