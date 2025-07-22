@@ -35,6 +35,22 @@ function updateDisplay(timeLeft: number): void {
   if (display) {
     display.textContent = formatTime(timeLeft);
   }
+  updateProgressCircle(timeLeft);
+}
+
+function updateProgressCircle(timeLeft: number): void {
+  const progressCircle = document.getElementById('progress-circle') as unknown as SVGCircleElement;
+  if (!progressCircle) return;
+  
+  const maxTime = 60 * 60; // 60分を最大値とする
+  const currentTime = Math.min(timeLeft, maxTime);
+  const percentage = currentTime / maxTime;
+  
+  // SVGの円周の長さ（2πr、r=90）
+  const circumference = 2 * Math.PI * 90;
+  const offset = circumference * (1 - percentage);
+  
+  progressCircle.style.strokeDashoffset = offset.toString();
 }
 
 function updateButtons(state: string): void {
@@ -63,24 +79,30 @@ function updateButtons(state: string): void {
 
 function updateStateDisplay(state: string): void {
   const stateDisplay = document.getElementById('state-display');
+  const progressCircle = document.getElementById('progress-circle');
+  
   if (stateDisplay) {
     const baseClasses = 'text-2xl font-bold h-8 mb-4';
     switch (state) {
       case 'work':
         stateDisplay.textContent = '作業中';
         stateDisplay.className = `${baseClasses} text-red-600`;
+        if (progressCircle) progressCircle.setAttribute('stroke', '#dc2626');
         break;
       case 'break':
         stateDisplay.textContent = '休憩中';
         stateDisplay.className = `${baseClasses} text-green-600`;
+        if (progressCircle) progressCircle.setAttribute('stroke', '#16a34a');
         break;
       case 'paused':
         stateDisplay.textContent = '一時停止';
         stateDisplay.className = `${baseClasses} text-gray-600`;
+        if (progressCircle) progressCircle.setAttribute('stroke', '#6b7280');
         break;
       default:
         stateDisplay.textContent = '待機中';
         stateDisplay.className = `${baseClasses} text-gray-600`;
+        if (progressCircle) progressCircle.setAttribute('stroke', '#3b82f6');
     }
   }
 }
@@ -109,9 +131,34 @@ function initializeApp(): void {
       <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Pomoka</h1>
         
-        <div class="text-center mb-8">
+        <div class="text-center mb-8 relative">
           <div id="state-display" class="text-2xl font-bold h-8 mb-4 text-gray-600">待機中</div>
-          <div id="time-display" class="text-6xl font-mono font-bold text-gray-800">25:00</div>
+          <div class="relative inline-block">
+            <svg width="200" height="200" class="transform -rotate-90">
+              <circle
+                cx="100"
+                cy="100"
+                r="90"
+                fill="none"
+                stroke="#e5e7eb"
+                stroke-width="12"
+              />
+              <circle
+                id="progress-circle"
+                cx="100"
+                cy="100"
+                r="90"
+                fill="none"
+                stroke="#3b82f6"
+                stroke-width="12"
+                stroke-dasharray="${2 * Math.PI * 90}"
+                stroke-dashoffset="0"
+                stroke-linecap="round"
+                class="transition-all duration-1000"
+              />
+            </svg>
+            <div id="time-display" class="absolute inset-0 flex items-center justify-center text-5xl font-mono font-bold text-gray-800">25:00</div>
+          </div>
         </div>
         
         <div class="flex justify-center gap-4">
@@ -143,6 +190,9 @@ function initializeApp(): void {
   document.getElementById('start-btn')?.addEventListener('click', () => timer.start());
   document.getElementById('pause-btn')?.addEventListener('click', () => timer.pause());
   document.getElementById('reset-btn')?.addEventListener('click', () => timer.reset());
+  
+  // 初期状態のプログレスバーを設定
+  updateProgressCircle(25 * 60);
 }
 
 initializeApp();
