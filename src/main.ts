@@ -5,8 +5,6 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 
 let timer: PomodoroTimer;
 let flashInterval: number | undefined;
-let resetHoldTimeout: number | undefined;
-let resetSecondPhaseTimeout: number | undefined;
 
 interface TimerSettings {
   workMinutes: number;
@@ -107,12 +105,14 @@ function updateButtons(state: string): void {
     playPauseBtn.className = 'p-5 md:p-7 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
     playPauseBtn.disabled = false;
     resetBtn.disabled = true;
+    resetBtn.className = 'p-5 md:p-7 bg-gray-400 text-gray-300 rounded-full cursor-not-allowed w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
   } else if (state === 'work' || state === 'break' || state === 'longBreak') {
     playPauseBtn.innerHTML = getPauseIcon();
     playPauseBtn.setAttribute('aria-label', '一時停止');
     playPauseBtn.className = 'p-5 md:p-7 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
     playPauseBtn.disabled = false;
     resetBtn.disabled = false;
+    resetBtn.className = 'p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
   } else if (state === 'paused') {
     playPauseBtn.innerHTML = getPlayIcon();
     playPauseBtn.setAttribute('aria-label', '再開');
@@ -164,49 +164,52 @@ function flashScreen(): void {
   }, 300);
 }
 
-function startResetHold(): void {
-  const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
-  if (!resetBtn || resetBtn.disabled) return;
-
-  const resetProgressBar = document.getElementById('reset-progress');
-  if (!resetProgressBar) return;
-
-  const holdDuration = 1000; // 1秒
-
-  // まず即座に1/3まで進める
-  resetProgressBar.style.transition = 'width 50ms ease-out';
-  resetProgressBar.style.width = '33.33%';
-
-  // 200ms後に残りの部分をゆっくり進める（長押し継続時のみ）
-  resetSecondPhaseTimeout = window.setTimeout(() => {
-    resetProgressBar.style.transition = `width ${holdDuration - 200}ms ease-out`;
-    resetProgressBar.style.width = '100%';
-  }, 200);
-
-  resetHoldTimeout = window.setTimeout(() => {
-    // 長押し完了時にリセット実行
+function showResetDialog(): void {
+  const dialog = document.createElement('div');
+  dialog.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+  dialog.innerHTML = `
+    <div class="bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">タイマーをリセットしますか？</h3>
+      <p class="text-gray-600 text-sm mb-6 text-center">現在の進行状況が失われます</p>
+      <div class="flex gap-3">
+        <button id="cancel-reset" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+          キャンセル
+        </button>
+        <button id="confirm-reset" class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium">
+          リセット
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(dialog);
+  
+  // キャンセルボタン
+  document.getElementById('cancel-reset')?.addEventListener('click', () => {
+    document.body.removeChild(dialog);
+  });
+  
+  // 確認ボタン
+  document.getElementById('confirm-reset')?.addEventListener('click', () => {
     timer.reset();
-    resetResetHold();
-  }, holdDuration);
-}
-
-function resetResetHold(): void {
-  if (resetHoldTimeout) {
-    clearTimeout(resetHoldTimeout);
-    resetHoldTimeout = undefined;
-  }
-
-  if (resetSecondPhaseTimeout) {
-    clearTimeout(resetSecondPhaseTimeout);
-    resetSecondPhaseTimeout = undefined;
-  }
-
-  const resetProgressBar = document.getElementById('reset-progress');
-  if (resetProgressBar) {
-    resetProgressBar.style.width = '0%';
-    resetProgressBar.style.transition = 'width 200ms ease-out';
-  }
-
+    document.body.removeChild(dialog);
+  });
+  
+  // 背景クリックでキャンセル
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) {
+      document.body.removeChild(dialog);
+    }
+  });
+  
+  // ESCキーでキャンセル
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      document.body.removeChild(dialog);
+      document.removeEventListener('keydown', handleKeydown);
+    }
+  };
+  document.addEventListener('keydown', handleKeydown);
 }
 
 function showSettingsView(): void {
@@ -386,14 +389,9 @@ function initializeTimerApp(): void {
         <button id="play-pause-btn" class="p-5 md:p-7 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center" aria-label="スタート">
           ${getPlayIcon()}
         </button>
-        <div class="relative">
-          <button id="reset-btn" class="p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center relative overflow-hidden" disabled aria-label="リセット（長押し）">
-            <div class="relative z-10">
-              ${getResetIcon()}
-            </div>
-            <div id="reset-progress" class="absolute inset-0 bg-red-500 opacity-40 w-0 transition-none"></div>
-          </button>
-        </div>
+        <button id="reset-btn" class="p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center" disabled aria-label="リセット">
+          ${getResetIcon()}
+        </button>
       </div>
     </div>
   `;
@@ -422,16 +420,13 @@ function initializeTimerApp(): void {
     }
   });
 
-  // リセットボタンの長押しイベントリスナー
-  const resetBtn = document.getElementById('reset-btn');
-  if (resetBtn) {
-    resetBtn.addEventListener('mousedown', startResetHold);
-    resetBtn.addEventListener('mouseup', resetResetHold);
-    resetBtn.addEventListener('mouseleave', resetResetHold);
-    resetBtn.addEventListener('touchstart', startResetHold);
-    resetBtn.addEventListener('touchend', resetResetHold);
-    resetBtn.addEventListener('touchcancel', resetResetHold);
-  }
+  // リセットボタンのクリックイベントリスナー
+  document.getElementById('reset-btn')?.addEventListener('click', () => {
+    const state = timer.getState();
+    if (state !== 'idle') {
+      showResetDialog();
+    }
+  });
   
   // Settings button event listener
   document.getElementById('settings-btn')?.addEventListener('click', showSettingsView);
