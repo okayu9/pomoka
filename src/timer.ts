@@ -138,12 +138,9 @@ export class PomodoroTimer {
     if (this.state === 'work' || this.state === 'break' || this.state === 'longBreak') {
       this.timeLeft = 0;
       this.config.onTick?.(this.timeLeft);
-      // 次のイベントループで完了処理を実行
-      setTimeout(() => {
-        if (this.timeLeft === 0) {
-          this.handleTimerComplete();
-        }
-      }, 100);
+      // タイマーを止めて完了処理を直接実行
+      this.stopTimer();
+      this.handleTimerComplete();
     }
   }
 }
