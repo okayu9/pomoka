@@ -96,6 +96,7 @@ function updateProgressCircle(timeLeft: number): void {
 }
 
 function updateButtons(state: string): void {
+  console.log('updateButtons called with state:', state);
   const playPauseBtn = document.getElementById('play-pause-btn') as HTMLButtonElement;
   const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
   const settingsContainer = document.getElementById('settings-container') as HTMLDivElement;
@@ -127,6 +128,15 @@ function updateButtons(state: string): void {
     resetBtn.className = 'p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
     // 一時停止中は設定ボタンを非表示
     if (settingsContainer) settingsContainer.style.display = 'none';
+  } else if (state === 'waiting') {
+    playPauseBtn.innerHTML = getPlayIcon();
+    playPauseBtn.setAttribute('aria-label', '次へ');
+    playPauseBtn.className = 'p-5 md:p-7 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center animate-pulse';
+    playPauseBtn.disabled = false;
+    resetBtn.disabled = false;
+    resetBtn.className = 'p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center';
+    // 待機中は設定ボタンを非表示
+    if (settingsContainer) settingsContainer.style.display = 'none';
   }
 }
 
@@ -156,19 +166,49 @@ function updateStateDisplay(state: string): void {
 function flashScreen(): void {
   if (flashInterval) return;
   
-  let count = 0;
-  const maxFlashes = 6;
+  // 全画面のオーバーレイを作成
+  const overlay = document.createElement('div');
+  overlay.id = 'flash-overlay';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 215, 0, 0.8);
+    z-index: 9999;
+    cursor: pointer;
+    opacity: 0;
+  `;
+  
+  // オーバーレイをクリックで次の状態に進む
+  overlay.addEventListener('click', () => {
+    stopFlashing();
+    if (timer.getState() === 'waiting') {
+      timer.proceedToNext();
+    }
+  });
+  
+  document.body.appendChild(overlay);
   
   flashInterval = window.setInterval(() => {
-    document.body.classList.toggle('bg-yellow-200');
-    count++;
-    
-    if (count >= maxFlashes) {
-      clearInterval(flashInterval);
-      flashInterval = undefined;
-      document.body.classList.remove('bg-yellow-200');
+    if (overlay.style.opacity === '0') {
+      overlay.style.opacity = '1';
+    } else {
+      overlay.style.opacity = '0';
     }
-  }, 300);
+  }, 400);
+}
+
+function stopFlashing(): void {
+  if (flashInterval) {
+    clearInterval(flashInterval);
+    flashInterval = undefined;
+    const overlay = document.getElementById('flash-overlay');
+    if (overlay) {
+      document.body.removeChild(overlay);
+    }
+  }
 }
 
 function showResetDialog(): void {
@@ -412,11 +452,18 @@ function initializeTimerApp(): void {
     longBreakEnabled: settings.longBreakEnabled,
     onTick: updateDisplay,
     onStateChange: (state) => {
+      console.log('State changed to:', state);
       updateButtons(state);
       updateStateDisplay(state);
     },
-    onComplete: flashScreen
+    onComplete: () => {
+      console.log('Timer completed, starting flash');
+      flashScreen();
+    }
   });
+
+  // デバッグ用にグローバルに公開
+  (window as any).timer = timer;
 
   // Play/Pause ボタンのイベントリスナー
   document.getElementById('play-pause-btn')?.addEventListener('click', () => {
@@ -425,6 +472,9 @@ function initializeTimerApp(): void {
       timer.start();
     } else if (state === 'work' || state === 'break' || state === 'longBreak') {
       timer.pause();
+    } else if (state === 'waiting') {
+      stopFlashing();
+      timer.proceedToNext();
     }
   });
 
