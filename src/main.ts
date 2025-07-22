@@ -90,8 +90,8 @@ function updateProgressCircle(timeLeft: number): void {
   const currentTime = Math.min(timeLeft, maxTime);
   const percentage = currentTime / maxTime;
   
-  // SVGの円周の長さ（2πr、r=120）
-  const circumference = 2 * Math.PI * 120;
+  // SVGの円周の長さ（2πr、r=140）
+  const circumference = 2 * Math.PI * 140;
   const offset = circumference * (1 - percentage);
   
   progressCircle.style.strokeDashoffset = offset.toString();
@@ -437,6 +437,30 @@ function initializeTimerApp(): void {
 
   // 初期状態のプログレスバーを設定
   updateProgressCircle(settings.workMinutes * 60);
+  
+  // レスポンシブ対応でSVGサイズを動的調整
+  const updateSVGSize = () => {
+    const svg = document.querySelector('svg');
+    const display = document.getElementById('time-display');
+    if (svg && display) {
+      if (window.innerWidth >= 768) { // md breakpoint
+        svg.setAttribute('width', '384');
+        svg.setAttribute('height', '384');
+        svg.querySelectorAll('circle').forEach(circle => {
+          circle.setAttribute('cx', '192');
+          circle.setAttribute('cy', '192');
+          circle.setAttribute('r', '168');
+        });
+        const progressCircle = document.getElementById('progress-circle');
+        if (progressCircle) {
+          progressCircle.setAttribute('stroke-dasharray', (2 * Math.PI * 168).toString());
+        }
+      }
+    }
+  };
+  
+  updateSVGSize();
+  window.addEventListener('resize', updateSVGSize);
 
   // デバッグ用：sキーで残り1秒までスキップ
   document.addEventListener('keydown', (event) => {
