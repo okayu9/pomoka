@@ -389,7 +389,7 @@ function initializeTimerApp(): void {
         <button id="play-pause-btn" class="p-5 md:p-7 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center" aria-label="スタート">
           ${getPlayIcon()}
         </button>
-        <button id="reset-btn" class="p-5 md:p-7 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 md:w-24 md:h-24 flex items-center justify-center" disabled aria-label="リセット">
+        <button id="reset-btn" class="p-5 md:p-7 bg-gray-400 text-gray-300 rounded-full cursor-not-allowed w-20 h-20 md:w-24 md:h-24 flex items-center justify-center" disabled aria-label="リセット">
           ${getResetIcon()}
         </button>
       </div>
