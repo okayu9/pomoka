@@ -46,8 +46,8 @@ function updateProgressCircle(timeLeft: number): void {
   const currentTime = Math.min(timeLeft, maxTime);
   const percentage = currentTime / maxTime;
   
-  // SVGの円周の長さ（2πr、r=90）
-  const circumference = 2 * Math.PI * 90;
+  // SVGの円周の長さ（2πr、r=120）
+  const circumference = 2 * Math.PI * 120;
   const offset = circumference * (1 - percentage);
   
   progressCircle.style.strokeDashoffset = offset.toString();
@@ -117,48 +117,46 @@ function flashScreen(): void {
 
 function initializeApp(): void {
   app.innerHTML = `
-    <div class="min-h-screen flex items-center justify-center bg-gray-100">
-      <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <div class="text-center mb-8 relative">
-          <div class="relative inline-block">
-            <svg width="200" height="200" class="transform -rotate-90">
-              <circle
-                cx="100"
-                cy="100"
-                r="90"
-                fill="none"
-                stroke="#e5e7eb"
-                stroke-width="12"
-              />
-              <circle
-                id="progress-circle"
-                cx="100"
-                cy="100"
-                r="90"
-                fill="none"
-                stroke="#3b82f6"
-                stroke-width="12"
-                stroke-dasharray="${2 * Math.PI * 90}"
-                stroke-dashoffset="0"
-                stroke-linecap="round"
-                class="transition-all duration-1000"
-              />
-            </svg>
-            <div id="time-display" class="absolute inset-0 flex items-center justify-center text-5xl font-mono font-bold text-gray-800">25:00</div>
-          </div>
+    <div class="min-h-screen flex flex-col items-center justify-center bg-white">
+      <div class="text-center mb-12 relative">
+        <div class="relative inline-block">
+          <svg width="280" height="280" class="transform -rotate-90">
+            <circle
+              cx="140"
+              cy="140"
+              r="120"
+              fill="none"
+              stroke="#e5e7eb"
+              stroke-width="16"
+            />
+            <circle
+              id="progress-circle"
+              cx="140"
+              cy="140"
+              r="120"
+              fill="none"
+              stroke="#3b82f6"
+              stroke-width="16"
+              stroke-dasharray="${2 * Math.PI * 120}"
+              stroke-dashoffset="0"
+              stroke-linecap="round"
+              class="transition-all duration-1000"
+            />
+          </svg>
+          <div id="time-display" class="absolute inset-0 flex items-center justify-center text-6xl font-mono font-bold text-gray-800">25:00</div>
         </div>
-        
-        <div class="flex justify-center gap-4">
-          <button id="start-btn" class="p-4 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-16 h-16 flex items-center justify-center" aria-label="スタート">
-            ${getPlayIcon()}
-          </button>
-          <button id="pause-btn" class="p-4 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors w-16 h-16 flex items-center justify-center" disabled aria-label="一時停止">
-            ${getPauseIcon()}
-          </button>
-          <button id="reset-btn" class="p-4 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-16 h-16 flex items-center justify-center" disabled aria-label="リセット">
-            ${getResetIcon()}
-          </button>
-        </div>
+      </div>
+      
+      <div class="flex justify-center gap-6">
+        <button id="start-btn" class="p-6 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors w-20 h-20 flex items-center justify-center" aria-label="スタート">
+          ${getPlayIcon()}
+        </button>
+        <button id="pause-btn" class="p-6 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors w-20 h-20 flex items-center justify-center" disabled aria-label="一時停止">
+          ${getPauseIcon()}
+        </button>
+        <button id="reset-btn" class="p-6 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors w-20 h-20 flex items-center justify-center" disabled aria-label="リセット">
+          ${getResetIcon()}
+        </button>
       </div>
     </div>
   `;

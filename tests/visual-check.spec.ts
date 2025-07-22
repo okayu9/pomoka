@@ -44,7 +44,7 @@ test('スマホサイズでの表示確認', async ({ page }) => {
   await page.screenshot({ path: 'screenshots/mobile-view.png', fullPage: true });
   
   // レスポンシブデザインの確認
-  const container = page.locator('.bg-white.rounded-lg');
+  const container = page.locator('.min-h-screen');
   await expect(container).toBeVisible();
   
   console.log('✅ スマホサイズでの表示が正常です');
