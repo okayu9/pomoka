@@ -45,7 +45,7 @@ export class PomodoroTimer {
   reset(): void {
     this.stopTimer();
     this.state = 'idle';
-    this.timeLeft = 0;
+    this.timeLeft = this.config.workMinutes * 60;
     this.config.onStateChange?.(this.state);
     this.config.onTick?.(this.timeLeft);
   }
