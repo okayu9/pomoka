@@ -357,8 +357,8 @@ function initializeTimerApp(): void {
       </div>
       
       <div class="text-center mb-4 md:mb-0 md:mr-8 relative">
-        <div class="relative inline-block">
-          <svg width="320" height="320" class="transform -rotate-90">
+        <div class="relative w-80 h-80 md:w-96 md:h-96 mx-auto">
+          <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 320 320">
             <circle
               cx="160"
               cy="160"
