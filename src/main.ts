@@ -78,31 +78,21 @@ function updateButtons(state: string): void {
 }
 
 function updateStateDisplay(state: string): void {
-  const stateDisplay = document.getElementById('state-display');
   const progressCircle = document.getElementById('progress-circle');
   
-  if (stateDisplay) {
-    const baseClasses = 'text-2xl font-bold h-8 mb-4';
+  if (progressCircle) {
     switch (state) {
       case 'work':
-        stateDisplay.textContent = '作業中';
-        stateDisplay.className = `${baseClasses} text-red-600`;
-        if (progressCircle) progressCircle.setAttribute('stroke', '#dc2626');
+        progressCircle.setAttribute('stroke', '#dc2626');
         break;
       case 'break':
-        stateDisplay.textContent = '休憩中';
-        stateDisplay.className = `${baseClasses} text-green-600`;
-        if (progressCircle) progressCircle.setAttribute('stroke', '#16a34a');
+        progressCircle.setAttribute('stroke', '#16a34a');
         break;
       case 'paused':
-        stateDisplay.textContent = '一時停止';
-        stateDisplay.className = `${baseClasses} text-gray-600`;
-        if (progressCircle) progressCircle.setAttribute('stroke', '#6b7280');
+        progressCircle.setAttribute('stroke', '#6b7280');
         break;
       default:
-        stateDisplay.textContent = '待機中';
-        stateDisplay.className = `${baseClasses} text-gray-600`;
-        if (progressCircle) progressCircle.setAttribute('stroke', '#3b82f6');
+        progressCircle.setAttribute('stroke', '#3b82f6');
     }
   }
 }
@@ -130,7 +120,6 @@ function initializeApp(): void {
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
       <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
         <div class="text-center mb-8 relative">
-          <div id="state-display" class="text-2xl font-bold h-8 mb-4 text-gray-600">待機中</div>
           <div class="relative inline-block">
             <svg width="200" height="200" class="transform -rotate-90">
               <circle

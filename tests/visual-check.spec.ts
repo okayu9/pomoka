@@ -8,14 +8,10 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   await page.screenshot({ path: 'screenshots/initial-state.png', fullPage: true });
   
   // 基本要素の確認
-  await expect(page.locator('#state-display')).toHaveText('待機中');
   await expect(page.locator('#time-display')).toHaveText('25:00');
   
   // スタートボタンをクリック
   await page.click('#start-btn');
-  
-  // 作業中の状態を確認
-  await expect(page.locator('#state-display')).toHaveText('作業中');
   
   // 1秒待機してタイマーが動いているか確認
   await page.waitForTimeout(1500);
@@ -27,14 +23,12 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   
   // 一時停止ボタンをクリック
   await page.click('#pause-btn');
-  await expect(page.locator('#state-display')).toHaveText('一時停止');
   
   // スクリーンショットを撮る（一時停止）
   await page.screenshot({ path: 'screenshots/paused-state.png', fullPage: true });
   
   // リセットボタンをクリック
   await page.click('#reset-btn');
-  await expect(page.locator('#state-display')).toHaveText('待機中');
   await expect(page.locator('#time-display')).toHaveText('25:00');
   
   console.log('✅ ポモドーロタイマーの基本動作が正常です');
