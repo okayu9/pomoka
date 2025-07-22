@@ -27,10 +27,10 @@ test('ポモドーロタイマーの動作確認', async ({ page }) => {
   // スクリーンショットを撮る（一時停止）
   await page.screenshot({ path: 'screenshots/paused-state.png', fullPage: true });
   
-  // リセットボタンを長押し（2秒以上）
+  // リセットボタンを長押し（1秒以上）
   await page.hover('#reset-btn');
   await page.mouse.down();
-  await page.waitForTimeout(2500); // 2.5秒待機（2秒の長押し + 余裕）
+  await page.waitForTimeout(1200); // 1.2秒待機（1秒の長押し + 余裕）
   await page.mouse.up();
   
   // タイマーがリセットされることを確認

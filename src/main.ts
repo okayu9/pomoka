@@ -124,11 +124,11 @@ function startResetHold(): void {
   if (!resetProgressBar) return;
 
   resetProgress = 0;
-  const holdDuration = 2000; // 2秒
+  const holdDuration = 1000; // 1秒
 
-  // プログレスバーのアニメーション開始
+  // プログレスバーのアニメーション開始（加速度付き）
   resetProgressBar.style.width = '100%';
-  resetProgressBar.style.transition = `width ${holdDuration}ms linear`;
+  resetProgressBar.style.transition = `width ${holdDuration}ms cubic-bezier(0.4, 0, 0.6, 1)`;
 
   resetHoldTimeout = setTimeout(() => {
     // 長押し完了時にリセット実行
