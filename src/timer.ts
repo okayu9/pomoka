@@ -77,8 +77,9 @@ export class PomodoroTimer {
       this.timeLeft = this.config.breakMinutes * 60;
       this.startTimer();
     } else if (this.state === 'break') {
-      this.state = 'idle';
-      this.timeLeft = 0;
+      this.state = 'work';
+      this.timeLeft = this.config.workMinutes * 60;
+      this.startTimer();
     }
 
     this.config.onStateChange?.(this.state);
