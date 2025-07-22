@@ -7,8 +7,6 @@ let timer: PomodoroTimer;
 let flashInterval: number | undefined;
 let resetHoldTimeout: number | undefined;
 let resetSecondPhaseTimeout: number | undefined;
-let resetProgress: number = 0;
-let currentView: 'timer' | 'settings' = 'timer';
 
 interface TimerSettings {
   workMinutes: number;
@@ -153,7 +151,7 @@ function flashScreen(): void {
   let count = 0;
   const maxFlashes = 6;
   
-  flashInterval = setInterval(() => {
+  flashInterval = window.setInterval(() => {
     document.body.classList.toggle('bg-yellow-200');
     count++;
     
@@ -172,7 +170,6 @@ function startResetHold(): void {
   const resetProgressBar = document.getElementById('reset-progress');
   if (!resetProgressBar) return;
 
-  resetProgress = 0;
   const holdDuration = 1000; // 1秒
 
   // まず即座に1/3まで進める
@@ -180,12 +177,12 @@ function startResetHold(): void {
   resetProgressBar.style.width = '33.33%';
 
   // 200ms後に残りの部分をゆっくり進める（長押し継続時のみ）
-  resetSecondPhaseTimeout = setTimeout(() => {
+  resetSecondPhaseTimeout = window.setTimeout(() => {
     resetProgressBar.style.transition = `width ${holdDuration - 200}ms ease-out`;
     resetProgressBar.style.width = '100%';
   }, 200);
 
-  resetHoldTimeout = setTimeout(() => {
+  resetHoldTimeout = window.setTimeout(() => {
     // 長押し完了時にリセット実行
     timer.reset();
     resetResetHold();
@@ -209,11 +206,9 @@ function resetResetHold(): void {
     resetProgressBar.style.transition = 'width 200ms ease-out';
   }
 
-  resetProgress = 0;
 }
 
 function showSettingsView(): void {
-  currentView = 'settings';
   const settings = getSettings();
   
   app.innerHTML = `
@@ -343,7 +338,6 @@ function showSettingsView(): void {
 }
 
 function showTimerView(): void {
-  currentView = 'timer';
   initializeTimerApp();
 }
 

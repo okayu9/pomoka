@@ -19,14 +19,7 @@ export class PomodoroTimer {
   private completedCycles: number = 0;
 
   constructor(config: TimerConfig) {
-    this.config = {
-      workMinutes: 25,
-      breakMinutes: 5,
-      longBreakMinutes: 15,
-      cyclesUntilLongBreak: 4,
-      longBreakEnabled: true,
-      ...config
-    };
+    this.config = config;
   }
 
   start(): void {
@@ -59,7 +52,7 @@ export class PomodoroTimer {
   }
 
   private startTimer(): void {
-    this.intervalId = setInterval(() => {
+    this.intervalId = window.setInterval(() => {
       this.timeLeft--;
       this.config.onTick?.(this.timeLeft);
 
