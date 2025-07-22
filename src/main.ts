@@ -198,6 +198,7 @@ function showResetDialog(): void {
   
   // 確認ボタン
   document.getElementById('confirm-reset')?.addEventListener('click', () => {
+    stopFlashing(); // リセット時に点滅を確実に停止
     timer.reset();
     document.body.removeChild(dialog);
   });
@@ -431,6 +432,9 @@ function initializeTimerApp(): void {
   document.getElementById('reset-btn')?.addEventListener('click', () => {
     const state = timer.getState();
     if (state !== 'idle') {
+      if (state === 'waiting') {
+        stopFlashing(); // 点滅を停止してからダイアログ表示
+      }
       showResetDialog();
     }
   });

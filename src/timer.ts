@@ -50,6 +50,7 @@ export class PomodoroTimer {
     this.state = 'idle';
     this.timeLeft = this.config.workMinutes * 60;
     this.completedCycles = 0;
+    this.previousState = 'idle';
     this.config.onStateChange?.(this.state);
     this.config.onTick?.(this.timeLeft);
   }
